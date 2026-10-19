@@ -1,0 +1,115 @@
+// ==========================================
+// 1. Define the Classes
+// ==========================================
+
+class Player {
+    let x = 100
+    let y = 100
+    let speed = 5
+    let size = 32
+
+    // You don't need to pass 'self' as an argument. 
+    // The engine injects it automatically.
+    func set_speed(new_speed) {
+        self.speed = new_speed
+    }
+}
+
+class Wall {
+    let x = 0
+    let y = 0
+    let w = 0
+    let h = 0
+}
+
+// ==========================================
+// 2. Create Instances (Objects)
+// ==========================================
+
+// Create the player
+let p1 = new Player()
+
+// Create Wall 1 and set its properties
+let w1 = new Wall()
+w1.x = 200
+w1.y = 150
+w1.w = 40
+w1.h = 300
+
+// Create Wall 2 and set its properties
+let w2 = new Wall()
+w2.x = 400
+w2.y = 300
+w2.w = 250
+w2.h = 40
+
+on start {
+    show("OOP Engine Started! Check the console.")
+    
+    // Testing the class method!
+    // This changes the player's speed to 8 using OOP.
+    p1.set_speed(8) 
+}
+
+on update {
+    // 1. Read values from the Inspector
+    let psize = inspector_value("size")
+    let cw = inspector_value("collider_w")
+    let ch = inspector_value("collider_h")
+    let show_col = inspector_value("show_collider")
+
+    // 2. Calculate the offset to center the collider inside the sprite
+    let offset_x = (psize - cw) / 2
+    let offset_y = (psize - ch) / 2
+
+    let nx = p1.x
+    let ny = p1.y
+
+    if (key_pressed("left")) { nx = nx - p1.speed }
+    if (key_pressed("right")) { nx = nx + p1.speed }
+    if (key_pressed("up")) { ny = ny - p1.speed }
+    if (key_pressed("down")) { ny = ny + p1.speed }
+
+    // 3. Get the exact collision coordinates (Sprite position + Offset)
+    let cx = nx + offset_x
+    let cy = ny + offset_y
+
+    // 4. Check collisions using the adjusted collision coordinates (cx, cy)
+    let hit_w1 = collides("player", "wall1", cx, cy, w1.x, w1.y)
+    let hit_w2 = collides("player", "wall2", cx, cy, w2.x, w2.y)
+
+    // Check screen edges using the collider size
+    let hit_edge = false
+    if (cx < 0) { hit_edge = true }
+    if (cx + cw > 800) { hit_edge = true }
+    if (cy < 0) { hit_edge = true }
+    if (cy + ch > 600) { hit_edge = true }
+
+    // 5. Apply movement
+    if (not hit_w1 and not hit_w2 and not hit_edge) {
+        p1.x = nx
+        p1.y = ny
+    }
+
+    // 6. Draw Everything
+    clear_screen(20, 20, 30)
+    draw_rect(w1.x, w1.y, w1.w, w1.h, 90, 90, 110)
+    draw_rect(w2.x, w2.y, w2.w, w2.h, 90, 90, 110)
+    
+    // Draw the large visual sprite
+    draw_sprite(p1.x, p1.y, psize, psize)
+    
+    // 7. Draw the Red Collider Debug Box
+    if (show_col) {
+        // Top line
+        draw_rect(p1.x + offset_x, p1.y + offset_y, cw, 2, 255, 0, 0)
+        // Bottom line
+        draw_rect(p1.x + offset_x, p1.y + offset_y + ch - 2, cw, 2, 255, 0, 0)
+        // Left line
+        draw_rect(p1.x + offset_x, p1.y + offset_y, 2, ch, 255, 0, 0)
+        // Right line
+        draw_rect(p1.x + offset_x + cw - 2, p1.y + offset_y, 2, ch, 255, 0, 0)
+    }
+    
+    present_frame()
+}

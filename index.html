@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Pollen Engine - Editor</title>
+  <style>
+    body { background: #1e1e1e; color: white; font-family: sans-serif; margin: 0; display: flex; height: 100vh; }
+    #game-panel { flex: 1; display: flex; justify-content: center; align-items: center; background: #111; }
+    #canvas-container { border: 2px solid #333; box-shadow: 0 0 10px rgba(0,0,0,0.5); }
+    #inspector-panel { width: 320px; background: #252526; border-left: 2px solid #333; padding: 20px; box-sizing: border-box; overflow-y: auto; }
+    h2 { font-size: 14px; text-transform: uppercase; color: #aaa; border-bottom: 1px solid #333; padding-bottom: 5px; margin-top: 20px;}
+    h2:first-child { margin-top: 0; }
+    .entity-box { background: #2d2d2d; padding: 10px; border-radius: 4px; margin-bottom: 15px; border: 1px solid #444; }
+    .property { margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
+    .property label { font-size: 12px; color: #ccc; }
+    .property input[type="number"] { width: 60px; background: #111; border: 1px solid #555; color: white; padding: 4px; }
+    .property input[type="color"] { width: 40px; height: 25px; padding: 0; border: none; cursor: pointer; }
+    .property input[type="checkbox"] { cursor: pointer; }
+  </style>
+</head>
+<body>
+  <div id="game-panel">
+    <div id="canvas-container"><canvas id="canvas" width="800" height="600"></canvas></div>
+  </div>
+
+  <div id="inspector-panel">
+    <h2>Components</h2>
+    
+    <!-- PLAYER ENTITY -->
+    <!-- PLAYER ENTITY -->
+    <div class="entity-box">
+      <strong>Player</strong>
+      <div class="property"><label>Sprite Size</label><input type="number" id="player-size" value="64"></div>
+      <div class="property"><label>Collider W</label><input type="number" id="player-collider-w" value="32"></div>
+      <div class="property"><label>Collider H</label><input type="number" id="player-collider-h" value="32"></div>
+      <div class="property"><label>Show Collider</label><input type="checkbox" id="player-show-collider" checked></div>
+      <div class="property"><label>Collision</label><input type="checkbox" id="player-collider" checked></div>
+      
+      <div class="property" style="display: block; margin-top: 10px;">
+        <label style="display: block; margin-bottom: 5px;">Sprite Image</label>
+        <input type="file" id="player-sprite" accept="image/*" onchange="window.onSpriteSelected(event)" style="font-size: 12px; width: 100%;">
+      </div>
+    </div>
+
+    <!-- WALL ENTITIES -->
+    <div class="entity-box">
+      <strong>Wall 1</strong>
+      <div class="property"><label>Collision</label><input type="checkbox" id="wall1-collider" checked></div>
+    </div>
+
+    <div class="entity-box">
+      <strong>Wall 2</strong>
+      <div class="property"><label>Collision</label><input type="checkbox" id="wall2-collider" checked></div>
+    </div>
+  </div>
+
+  <script>
+    var Module = { onRuntimeInitialized: function() { window.wasmReady = true; } };
+  </script>
+  <script src="/engine.js"></script>
+  <script type="module" src="/src/browser_main.ts"></script>
+</body>
+</html>
